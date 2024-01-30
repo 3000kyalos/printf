@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdarg.h>
+#include <stdio.h>
 #include <unistd.h>
 
 /**
@@ -21,36 +22,28 @@ int _printf(const char *format, ...)
 		if (*format == '%')
 		{
 			format++;
-			if (*format == 'c')
+			switch (*format)
 			{
-				char c = va_arg(args, int);
-
-				write(1, &c, 1);
-				count++;
-			}
-			else if (*format == 's')
-			{
-				char *s = va_arg(args, char *);
-
-				while (*s)
-				{
-					write(1, s, 1);
-					s++;
-					count++;
-				}
-			}
-			else if (*format == '%')
-			{
-				write(1, "%", 1);
-				count++;
+				case 'c':
+					count += putchar(va_arg(args, int));
+					break;
+				case 's':
+					count += printf("%s", va_arg(args, char *));
+					break;
+				case '%':
+					count += putchar('%');
+					break;
+				default:
+					break;
 			}
 		}
 		else
 		{
-			write(1, format, 1);
-			count++;
+			count += putchar(*format);
 		}
 		format++;
 	}
+	va_end(args);
+
 	return (count);
 }
